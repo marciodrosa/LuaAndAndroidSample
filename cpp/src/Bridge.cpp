@@ -16,6 +16,7 @@ JNIEnv *javaEnv;
 
 /**
 Lua function to set a value (first parameter) to a field (second parameter is the field identifier).
+It calls the Java method of the main activity.
 */
 int SetValueToFieldLuaFunction(lua_State *luaState)
 {
@@ -38,7 +39,7 @@ int SetValueToFieldLuaFunction(lua_State *luaState)
 
 /**
 Searches for the asset in the directory. Returns the full asset name (like "dir/asset") or empty
-if not found.
+if not found. Used to load the scripts from the assets.
 */
 string SearchAssetOnDir(string dirName, string assetName)
 {
@@ -143,6 +144,9 @@ void InitLuaSearches()
 	lua_pop(luaState, 2);
 }
 
+/**
+Initializes Lua and loads the engine script.
+*/
 void InitLua()
 {
 	Log::Info("Creating a new Lua state...");
@@ -174,7 +178,7 @@ void InitLua()
 extern "C"
 {
 	/**
-	Native implementation of the "on create" event of the activity.
+	Native implementation of the "on create" event of the activity. Initializes Lua.
 	*/
 	void ANativeActivity_onCreate(ANativeActivity* a, void* savedState, size_t savedStateSize)
 	{
@@ -185,7 +189,7 @@ extern "C"
 	}
 	
 	/**
-	Native function available on MainActivity class.
+	Native function available on MainActivity class. Installs the plugin.
 	*/
 	JNIEXPORT void JNICALL Java_me_umov_androidandlua_MainActivity_installPlugin(JNIEnv *env, jobject obj, jstring s)
 	{
@@ -216,7 +220,8 @@ extern "C"
 	}
 	
 	/**
-	Native function available on MainActivity class.
+	Native function available on MainActivity class. Executes a function of the previous installed
+	plugin, with the contex as parameter (context is a string to be parsed as a Lua table).
 	*/
 	JNIEXPORT void JNICALL Java_me_umov_androidandlua_MainActivity_callPluginFunction(JNIEnv *env, jobject obj, jstring jFunctionName, jstring jContextString)
 	{

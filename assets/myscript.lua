@@ -1,3 +1,5 @@
+-- This file is an example of plugin.
+
 -- Auxiliar function used by this plugin.
 local function findvaluefromfield(context, fieldname)
 	for i, v in ipairs(context.fieldsvalues) do

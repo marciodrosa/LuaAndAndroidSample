@@ -10,6 +10,10 @@ import android.text.TextWatcher;
 import android.util.Log;
 import android.widget.EditText;
 
+/**
+ * The main activity. Shows the fields on screen, calls the plugin engine (using native methods) and answers for requests
+ * from the native code to update field values.
+ */
 public class MainActivity extends Activity {
 	
 	private static List<EditText> fields;
@@ -84,6 +88,11 @@ public class MainActivity extends Activity {
 		}
 	}
 	
+	/**
+	 * Called from the native engine (C code).
+	 * @param value the value to set
+	 * @param fieldId the tag of the edit text
+	 */
 	public static void setValueToField(String value, String fieldId) {
 		Log.i("androidandlua", "Setting value '" + value + "' to field '" + fieldId + "'");
 		for (EditText editText : fields) {

@@ -1,3 +1,4 @@
+-- Auxiliar Lua functions used by the app to run the plugins.
 engine = {}
 
 -- Cals the event of the plugin table, if the event is available.
