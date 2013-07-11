@@ -1,0 +1,1 @@
+Sample projet that runs a Lua script inside the Android app.

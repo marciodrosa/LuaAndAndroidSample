@@ -1,0 +1,8 @@
+# Android build local files:
+local.properties
+
+# Android build and auto-generated folders:
+gen
+libs
+obj
+bin
