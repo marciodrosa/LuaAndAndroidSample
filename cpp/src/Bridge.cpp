@@ -182,66 +182,9 @@ void InitLua()
 	Log::Info("Creating the functions to comunicate with Java app.");
 	lua_pushcfunction(luaState, SetValueToFieldLuaFunction);
 	lua_setglobal(luaState, "setvaluetofield");
-
-	//Log::Info("Requiring 'vega' Lua script...");
-	//luaL_loadstring(luaState, "require 'vega'");
-	//lua_pcall(luaState, 0, 0, 0);
-
-	/*
-	Log::Info("Creating the capi Lua table...");
-	lua_getglobal(luaState, "vega");
-	lua_getfield(luaState, -1, "capi");
 	
-	Log::Info("Creating the Lua functions into the capi table...");
-	lua_pushstring(luaState, "checkinput");
-	lua_pushcfunction(luaState, CheckInputLuaFunction);
-	lua_settable(luaState, -3);
-	
-	lua_pushstring(luaState, "syncend");
-	lua_pushcfunction(luaState, SyncEndLuaFunction);
-	lua_settable(luaState, -3);
-	
-	lua_pushstring(luaState, "syncbegin");
-	lua_pushcfunction(luaState, SyncBeginLuaFunction);
-	lua_settable(luaState, -3);
-	
-	lua_pushstring(luaState, "render");
-	lua_pushcfunction(luaState, RenderLuaFunction);
-	lua_settable(luaState, -3);
-	
-	lua_pushstring(luaState, "clearscreen");
-	lua_pushcfunction(luaState, ClearScreenLuaFunction);
-	lua_settable(luaState, -3);
-	
-	lua_pushstring(luaState, "screensize");
-	lua_pushcfunction(luaState, ScreenSizeLuaFunction);
-	lua_settable(luaState, -3);
-	
-	lua_pushstring(luaState, "loadtexture");
-	lua_pushcfunction(luaState, LoadTextureLuaFunction);
-	lua_settable(luaState, -3);
-	
-	lua_pushstring(luaState, "releasetextures");
-	lua_pushcfunction(luaState, ReleaseTexturesLuaFunction);
-	lua_settable(luaState, -3);
-
-	lua_pop(luaState, 2);
-	Log::Info("capi Lua table created.");
-	*/
-}
-
-void ExecuteScript(string scriptName)
-{
-	lua_getglobal(luaState, "require");
-	lua_pushstring(luaState, scriptName.c_str());
-	lua_call(luaState, 1, 1);
-	
-	// sample: prints the result:
-	Log::Info("And the result is:");
-	stringstream result;
-	result << lua_tonumber(luaState, -1);
-	Log::Info(result.str());
-	lua_pop(luaState, 1);
+	lua_pushcfunction(luaState, GetValueFromFieldLuaFunction);
+	lua_setglobal(luaState, "getvaluefromfield");
 }
 
 extern "C"
@@ -260,13 +203,53 @@ extern "C"
 	/**
 	Native function available on MainActivity class.
 	*/
-	JNIEXPORT void JNICALL Java_me_umov_androidandlua_MainActivity_executeLuaScript(JNIEnv *env, jobject obj, jstring s)
+	JNIEXPORT void JNICALL Java_me_umov_androidandlua_MainActivity_installPlugin(JNIEnv *env, jobject obj, jstring s)
 	{
 		javaEnv = env;
-		Log::Info("Executing script...");
+		Log::Info("Installing script...");
 		string scriptName = env->GetStringUTFChars(s, 0);
-		Log::Info("Preparing to execute script:");
+		Log::Info("Preparing to install script:");
 		Log::Info(scriptName);
-		ExecuteScript(scriptName);
+		
+		Log::Info("Requiring script...");
+		lua_getglobal(luaState, "require");
+		lua_pushstring(luaState, scriptName.c_str());
+		if (lua_pcall(luaState, 1, 1, 0) != 0)
+		{
+			Log::Error("Error when require the script:");
+			Log::Error(lua_tostring(luaState, -1));
+			lua_pop(luaState, 1);
+		}
+		else
+		{
+			Log::Info("Storing the plugin table...");
+			lua_setglobal(luaState, "plugin");
+		}
+	}
+	
+	/**
+	Native function available on MainActivity class.
+	*/
+	JNIEXPORT void JNICALL Java_me_umov_androidandlua_MainActivity_callPluginFunction(JNIEnv *env, jobject obj, jstring s)
+	{
+		javaEnv = env;
+		Log::Info("Calling script function...");
+		string functionName = env->GetStringUTFChars(s, 0);
+		Log::Info("Preparing to execute script function:");
+		Log::Info(functionName);
+		
+		lua_getglobal(luaState, "plugin");
+		lua_pushstring(luaState, functionName.c_str());
+		lua_gettable(luaState, -2);
+		
+		Log::Info(lua_typename(luaState, lua_type(luaState, -1)));
+		
+		if (lua_pcall(luaState, 0, 0, 0) != 0)
+		{
+			Log::Error("Error executing the script function:");
+			Log::Error(lua_tostring(luaState, -1));
+			lua_pop(luaState, 1);
+		}
+		lua_pop(luaState, 1); // pops "plugin"
 	}
 }
