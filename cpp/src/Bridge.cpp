@@ -230,11 +230,11 @@ extern "C"
 	/**
 	Native function available on MainActivity class.
 	*/
-	JNIEXPORT void JNICALL Java_me_umov_androidandlua_MainActivity_callPluginFunction(JNIEnv *env, jobject obj, jstring s)
+	JNIEXPORT void JNICALL Java_me_umov_androidandlua_MainActivity_callPluginFunction(JNIEnv *env, jobject obj, jstring jFunctionName, jstring jContextString)
 	{
 		javaEnv = env;
 		Log::Info("Calling script function...");
-		string functionName = env->GetStringUTFChars(s, 0);
+		string functionName = env->GetStringUTFChars(jFunctionName, 0);
 		Log::Info("Preparing to execute script function:");
 		Log::Info(functionName);
 		
@@ -242,9 +242,12 @@ extern "C"
 		lua_pushstring(luaState, functionName.c_str());
 		lua_gettable(luaState, -2);
 		
-		Log::Info(lua_typename(luaState, lua_type(luaState, -1)));
+		Log::Info("Preparing the context table:");
+		string contextString = env->GetStringUTFChars(jContextString, 0);
+		luaL_loadstring(luaState, contextString.c_str());
+		lua_pcall(luaState, 0, 1, 0);
 		
-		if (lua_pcall(luaState, 0, 0, 0) != 0)
+		if (lua_pcall(luaState, 1, 0, 0) != 0) // call plugintable.function(context)
 		{
 			Log::Error("Error executing the script function:");
 			Log::Error(lua_tostring(luaState, -1));
