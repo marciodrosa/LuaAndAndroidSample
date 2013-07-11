@@ -182,12 +182,16 @@ void InitLua()
 
 void ExecuteScript(string scriptName)
 {
-	stringstream ss;
-	ss << "require '" << scriptName << "'";
-	if (luaL_loadstring(luaState, ss.str().c_str()) != 0)
-		Log::Error(lua_tostring(luaState, -1));
-	else if (lua_pcall(luaState, 0, 0, 0) != 0)
-		Log::Error(lua_tostring(luaState, -1));
+	lua_getglobal(luaState, "require");
+	lua_pushstring(luaState, scriptName.c_str());
+	lua_call(luaState, 1, 1);
+	
+	// sample: prints the result:
+	Log::Info("And the result is:");
+	stringstream result;
+	result << lua_tonumber(luaState, -1);
+	Log::Info(result.str());
+	lua_pop(luaState, 1);
 }
 
 extern "C"
@@ -206,7 +210,7 @@ extern "C"
 	/**
 	Native function available on MainActivity class.
 	*/
-	JNIEXPORT void JNICALL Java_me_umov_MainActivity_executeLuaScript(JNIEnv *env, jobject obj, jstring s)
+	JNIEXPORT void JNICALL Java_me_umov_androidandlua_MainActivity_executeLuaScript(JNIEnv *env, jobject obj, jstring s)
 	{
 		Log::Info("Executing script...");
 		string scriptName = env->GetStringUTFChars(s, 0);
