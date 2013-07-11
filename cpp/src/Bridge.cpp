@@ -28,12 +28,35 @@ int SetValueToFieldLuaFunction(lua_State *luaState)
 	jclass luaFunctionsClass = javaEnv->FindClass("me/umov/androidandlua/LuaFunctions");
 	jmethodID methodId =  javaEnv->GetStaticMethodID(luaFunctionsClass, "setValueToField", "(Ljava/lang/String;Ljava/lang/String;)V");
 	
-	// Calling the setValueToFieldMethod:
+	// Calling the setValueToField method:
 	jstring jValue = javaEnv->NewStringUTF(value);
 	jstring jFieldId = javaEnv->NewStringUTF(fieldId);
 	javaEnv->CallStaticVoidMethod(luaFunctionsClass, methodId, jValue, jFieldId);
 	
 	return 0;
+}
+
+/**
+Lua function to get a value from a field (parameter is the field identifier).
+*/
+int GetValueFromFieldLuaFunction(lua_State *luaState)
+{
+	Log::Info("GetValueFromFieldLuaFunction called.");
+	
+	const char* fieldId = lua_tolstring(luaState, -1, NULL);
+
+	// Accessing the LuaFunctions java class and the method setValueToField:
+	jclass luaFunctionsClass = javaEnv->FindClass("me/umov/androidandlua/LuaFunctions");
+	jmethodID methodId =  javaEnv->GetStaticMethodID(luaFunctionsClass, "getValueFromField", "(Ljava/lang/String;)Ljava/lang/String;");
+	
+	// Calling the getValueFromField method:
+	jstring jFieldId = javaEnv->NewStringUTF(fieldId);
+	jstring value = (jstring) javaEnv->CallStaticObjectMethod(luaFunctionsClass, methodId, jFieldId);
+	
+	// Pushes the string returned from the above method:
+	lua_pushstring(luaState, javaEnv->GetStringUTFChars(value, NULL));
+	
+	return 1;
 }
 
 /**

@@ -15,6 +15,7 @@
         android:text="@string/value_one" />
     
     <EditText 
+        android:id="@+id/value_one"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:inputType="text"
@@ -26,6 +27,7 @@
         android:text="@string/value_two" />
     
     <EditText 
+        android:id="@+id/value_two"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:inputType="text"
@@ -37,6 +39,7 @@
         android:text="@string/value_three" />
     
     <EditText 
+        android:id="@+id/value_three"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:inputType="text"

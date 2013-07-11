@@ -1,2 +1,2 @@
-setvaluetofield("THE VALUE", "THE FIELD")
+setvaluetofield("THE VALUE", "Value three")
 return 0

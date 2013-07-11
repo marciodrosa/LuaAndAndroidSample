@@ -1,8 +1,10 @@
 package me.umov.androidandlua;
 
+import java.util.Arrays;
+
 import android.app.Activity;
 import android.os.Bundle;
-import android.view.Menu;
+import android.widget.EditText;
 
 public class MainActivity extends Activity {
 
@@ -10,12 +12,7 @@ public class MainActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
-	}
-
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		getMenuInflater().inflate(R.menu.main, menu);
-		return true;
+		LuaFunctions.setFields(Arrays.asList((EditText) findViewById(R.id.value_one), (EditText) findViewById(R.id.value_two), (EditText) findViewById(R.id.value_three)));
 	}
 	
 	@Override
