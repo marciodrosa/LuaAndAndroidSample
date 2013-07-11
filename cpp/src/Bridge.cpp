@@ -12,6 +12,29 @@ using namespace std;
 
 ANativeActivity* activity;
 lua_State *luaState;
+JNIEnv *javaEnv;
+
+/**
+Lua function to set a value (first parameter) to a field (second parameter is the field identifier).
+*/
+int SetValueToFieldLuaFunction(lua_State *luaState)
+{
+	Log::Info("SetValueToFieldLuaFunction called.");
+	
+	const char* value = lua_tolstring(luaState, -2, NULL);
+	const char* fieldId = lua_tolstring(luaState, -1, NULL);
+
+	// Accessing the LuaFunctions java class and the method setValueToField:
+	jclass luaFunctionsClass = javaEnv->FindClass("me/umov/androidandlua/LuaFunctions");
+	jmethodID methodId =  javaEnv->GetStaticMethodID(luaFunctionsClass, "setValueToField", "(Ljava/lang/String;Ljava/lang/String;)V");
+	
+	// Calling the setValueToFieldMethod:
+	jstring jValue = javaEnv->NewStringUTF(value);
+	jstring jFieldId = javaEnv->NewStringUTF(fieldId);
+	javaEnv->CallStaticVoidMethod(luaFunctionsClass, methodId, jValue, jFieldId);
+	
+	return 0;
+}
 
 /**
 Searches for the asset in the directory. Returns the full asset name (like "dir/asset") or empty
@@ -132,6 +155,10 @@ void InitLua()
 	
 	Log::Info("Configuring Android Lua searches...");
 	InitLuaSearches();
+	
+	Log::Info("Creating the functions to comunicate with Java app.");
+	lua_pushcfunction(luaState, SetValueToFieldLuaFunction);
+	lua_setglobal(luaState, "setvaluetofield");
 
 	//Log::Info("Requiring 'vega' Lua script...");
 	//luaL_loadstring(luaState, "require 'vega'");
@@ -212,6 +239,7 @@ extern "C"
 	*/
 	JNIEXPORT void JNICALL Java_me_umov_androidandlua_MainActivity_executeLuaScript(JNIEnv *env, jobject obj, jstring s)
 	{
+		javaEnv = env;
 		Log::Info("Executing script...");
 		string scriptName = env->GetStringUTFChars(s, 0);
 		Log::Info("Preparing to execute script:");
