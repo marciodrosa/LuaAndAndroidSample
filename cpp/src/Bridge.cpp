@@ -24,14 +24,14 @@ int SetValueToFieldLuaFunction(lua_State *luaState)
 	const char* value = lua_tolstring(luaState, -2, NULL);
 	const char* fieldId = lua_tolstring(luaState, -1, NULL);
 
-	// Accessing the LuaFunctions java class and the method setValueToField:
-	jclass luaFunctionsClass = javaEnv->FindClass("me/umov/androidandlua/LuaFunctions");
-	jmethodID methodId =  javaEnv->GetStaticMethodID(luaFunctionsClass, "setValueToField", "(Ljava/lang/String;Ljava/lang/String;)V");
+	// Accessing the MainActivity java class and the method setValueToField:
+	jclass mainActivityClass = javaEnv->FindClass("me/umov/androidandlua/MainActivity");
+	jmethodID methodId =  javaEnv->GetStaticMethodID(mainActivityClass, "setValueToField", "(Ljava/lang/String;Ljava/lang/String;)V");
 	
 	// Calling the setValueToField method:
 	jstring jValue = javaEnv->NewStringUTF(value);
 	jstring jFieldId = javaEnv->NewStringUTF(fieldId);
-	javaEnv->CallStaticVoidMethod(luaFunctionsClass, methodId, jValue, jFieldId);
+	javaEnv->CallStaticVoidMethod(mainActivityClass, methodId, jValue, jFieldId);
 	
 	return 0;
 }

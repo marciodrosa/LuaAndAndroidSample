@@ -1,3 +1,4 @@
+-- Auxiliar function used by this plugin.
 local function findvaluefromfield(context, fieldname)
 	for i, v in ipairs(context.fieldsvalues) do
 		if v.field == fieldname and v.field ~= nil then
@@ -10,6 +11,19 @@ end
 return {
 	
 	-- Called when a field value is changed.
+	-- The context table is represented as the following exemple:
+	-- context = {
+	--		fieldvalue = { -- the current field
+	--			field = "identifier",
+	--			value = "the value" -- or nil, if it is an empty field
+	--		},
+	-- 		fieldsvalues = { -- list of all fields
+	-- 			{
+	-- 				field = "identifier",
+	-- 				value = "the value"
+	-- 			},
+	-- 		}
+	-- }
 	onfieldvaluechangedbyuser = function(context)
 		local text1 = findvaluefromfield(context, "Value one")
 		local text2 = findvaluefromfield(context, "Value two")

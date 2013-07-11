@@ -12,7 +12,7 @@ import android.widget.EditText;
 
 public class MainActivity extends Activity {
 	
-	private List<EditText> fields;
+	private static List<EditText> fields;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -29,7 +29,6 @@ public class MainActivity extends Activity {
 	
 	private void initFields() {
 		fields = Arrays.asList((EditText) findViewById(R.id.value_one), (EditText) findViewById(R.id.value_two), (EditText) findViewById(R.id.value_three));
-		LuaFunctions.setFields(fields);
 		for (final EditText editText : fields) {
 			editText.addTextChangedListener(new TextWatcher() {
 				
@@ -82,6 +81,16 @@ public class MainActivity extends Activity {
 			return "{ field = \"" + field.getTag() + "\" }";
 		} else {
 			return "{ field = \"" + field.getTag() + "\", value = \"" + field.getText().toString() + "\" }";
+		}
+	}
+	
+	public static void setValueToField(String value, String fieldId) {
+		Log.i("androidandlua", "Setting value '" + value + "' to field '" + fieldId + "'");
+		for (EditText editText : fields) {
+			if (editText.getTag().equals(fieldId)) {
+				Log.i("androidandlua", "Field found, setting value.");
+				editText.setText(value);
+			}
 		}
 	}
 	
