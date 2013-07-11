@@ -37,29 +37,6 @@ int SetValueToFieldLuaFunction(lua_State *luaState)
 }
 
 /**
-Lua function to get a value from a field (parameter is the field identifier).
-*/
-int GetValueFromFieldLuaFunction(lua_State *luaState)
-{
-	Log::Info("GetValueFromFieldLuaFunction called.");
-	
-	const char* fieldId = lua_tolstring(luaState, -1, NULL);
-
-	// Accessing the LuaFunctions java class and the method setValueToField:
-	jclass luaFunctionsClass = javaEnv->FindClass("me/umov/androidandlua/LuaFunctions");
-	jmethodID methodId =  javaEnv->GetStaticMethodID(luaFunctionsClass, "getValueFromField", "(Ljava/lang/String;)Ljava/lang/String;");
-	
-	// Calling the getValueFromField method:
-	jstring jFieldId = javaEnv->NewStringUTF(fieldId);
-	jstring value = (jstring) javaEnv->CallStaticObjectMethod(luaFunctionsClass, methodId, jFieldId);
-	
-	// Pushes the string returned from the above method:
-	lua_pushstring(luaState, javaEnv->GetStringUTFChars(value, NULL));
-	
-	return 1;
-}
-
-/**
 Searches for the asset in the directory. Returns the full asset name (like "dir/asset") or empty
 if not found.
 */
@@ -183,8 +160,15 @@ void InitLua()
 	lua_pushcfunction(luaState, SetValueToFieldLuaFunction);
 	lua_setglobal(luaState, "setvaluetofield");
 	
-	lua_pushcfunction(luaState, GetValueFromFieldLuaFunction);
-	lua_setglobal(luaState, "getvaluefromfield");
+	Log::Info("Requiring engine script...");
+	lua_getglobal(luaState, "require");
+	lua_pushstring(luaState, "engine");
+	if (lua_pcall(luaState, 1, 1, 0) != 0)
+	{
+		Log::Error("Error when require the engine script:");
+		Log::Error(lua_tostring(luaState, -1));
+		lua_pop(luaState, 1);
+	}
 }
 
 extern "C"
@@ -211,6 +195,8 @@ extern "C"
 		Log::Info("Preparing to install script:");
 		Log::Info(scriptName);
 		
+		lua_getglobal(luaState, "engine");
+		
 		Log::Info("Requiring script...");
 		lua_getglobal(luaState, "require");
 		lua_pushstring(luaState, scriptName.c_str());
@@ -223,8 +209,10 @@ extern "C"
 		else
 		{
 			Log::Info("Storing the plugin table...");
-			lua_setglobal(luaState, "plugin");
+			lua_setfield(luaState, -2, "plugin");
 		}
+		
+		lua_pop(luaState, 1); // pops "engine"
 	}
 	
 	/**
@@ -238,21 +226,23 @@ extern "C"
 		Log::Info("Preparing to execute script function:");
 		Log::Info(functionName);
 		
-		lua_getglobal(luaState, "plugin");
-		lua_pushstring(luaState, functionName.c_str());
+		lua_getglobal(luaState, "engine");
+		lua_pushstring(luaState, "callplugin");
 		lua_gettable(luaState, -2);
+		
+		lua_pushstring(luaState, functionName.c_str());
 		
 		Log::Info("Preparing the context table:");
 		string contextString = env->GetStringUTFChars(jContextString, 0);
 		luaL_loadstring(luaState, contextString.c_str());
 		lua_pcall(luaState, 0, 1, 0);
 		
-		if (lua_pcall(luaState, 1, 0, 0) != 0) // call plugintable.function(context)
+		if (lua_pcall(luaState, 2, 0, 0) != 0) // call engine.callplugin(functionname, context)
 		{
 			Log::Error("Error executing the script function:");
 			Log::Error(lua_tostring(luaState, -1));
 			lua_pop(luaState, 1);
 		}
-		lua_pop(luaState, 1); // pops "plugin"
+		lua_pop(luaState, 1); // pops "engine"
 	}
 }

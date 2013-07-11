@@ -22,19 +22,6 @@ public class LuaFunctions {
 		}
 	}
 	
-	public static String getValueFromField(String fieldId) {
-		Log.i("androidandlua", "Getting value from field '" + fieldId + "'");
-		for (EditText editText : fields) {
-			if (editText.getTag().equals(fieldId)) {
-				String value = editText.getText().toString();
-				Log.i("androidandlua", "Returning value '" + value + "'");
-				return value;
-			}
-		}
-		Log.i("androidandlua", "Field not found.");
-		return "";
-	}
-
 	public static List<EditText> getFields() {
 		return fields;
 	}
