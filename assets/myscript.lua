@@ -1,14 +1,5 @@
 -- This file is an example of plugin.
 
--- Auxiliar function used by this plugin.
-local function findvaluefromfield(context, fieldname)
-	for i, v in ipairs(context.fieldsvalues) do
-		if v.field == fieldname and v.field ~= nil then
-			return v.value
-		end
-	end
-end
-
 -- Returns the plugin table.
 return {
 	
@@ -19,24 +10,29 @@ return {
 	--			field = "identifier",
 	--			value = "the value" -- or nil, if it is an empty field
 	--		},
-	-- 		fieldsvalues = { -- list of all fields
-	-- 			{
+	-- 		fieldsvalues = { -- hash of all fields
+	-- 			"identifier" = {
 	-- 				field = "identifier",
 	-- 				value = "the value"
 	-- 			},
 	-- 		}
 	-- }
 	onfieldvaluechangedbyuser = function(context)
-		local text1 = findvaluefromfield(context, "Value one")
-		local text2 = findvaluefromfield(context, "Value two")
+		local text1 = context.fieldsvalues["Field one"].value
+		local text2 = context.fieldsvalues["Field two"].value
 		local text3 = ""
-		if text1 == nil then text3 = "Please type something on field 1."
-		elseif text2 == nil then text3 = "Please type something on field 2." end
-		if text1 ~= nil and text2 ~= nil then text3 = "V1: '"..text1.."' V2: '"..text2.."'." end
-		-- As result, sets a new value to the field "Value three":
+		if text1 == nil then
+			text3 = "Please type something on field 1."
+		elseif text2 == nil then
+			text3 = "Please type something on field 2."
+		end
+		if text1 ~= nil and text2 ~= nil then
+			text3 = "V1: '"..text1.."' V2: '"..text2.."'."
+		end
+		-- As result, sets a new value to the field "Field three":
 		return {
 			newfieldvalue = {
-				field = "Value three",
+				field = "Field three",
 				value = text3,
 			}
 		}

@@ -3,9 +3,8 @@
 
     <string name="app_name">Android &amp; Lua</string>
     <string name="action_settings">Settings</string>
-    <string name="hello_world">Hello world!</string>
-    <string name="value_one">Value one</string>
-    <string name="value_two">Value two</string>
-    <string name="value_three">Value three</string>
+    <string name="field_one">Field one</string>
+    <string name="field_two">Field two</string>
+    <string name="field_three">Field three</string>
 
 </resources>

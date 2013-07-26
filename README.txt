@@ -20,3 +20,5 @@ NOTES:
 The Lua scripts (the plugin and the engine) are loaded from the "assets" folder.
 
 This project usess Lua 5.2.1 port for Android: https://github.com/marciodrosa/LuaAndroid
+
+I build this sample for ARM architecture only.

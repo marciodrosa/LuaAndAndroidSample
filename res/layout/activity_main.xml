@@ -12,37 +12,37 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/value_one" />
+        android:text="@string/field_one" />
     
     <EditText 
         android:id="@+id/value_one"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:inputType="text"
-        android:tag="@string/value_one" />
+        android:tag="@string/field_one" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/value_two" />
+        android:text="@string/field_two" />
     
     <EditText 
         android:id="@+id/value_two"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:inputType="text"
-        android:tag="@string/value_two" />
+        android:tag="@string/field_two" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/value_three" />
+        android:text="@string/field_three" />
     
     <EditText 
         android:id="@+id/value_three"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:inputType="text"
-        android:tag="@string/value_three" />
+        android:tag="@string/field_three" />
 
 </LinearLayout>

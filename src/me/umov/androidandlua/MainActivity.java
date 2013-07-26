@@ -74,6 +74,7 @@ public class MainActivity extends Activity {
 		builder.append("fieldvalue = ").append(createFieldValueLuaTable(currentEditText)).append(", ");
 		builder.append("fieldsvalues = { ");
 		for (EditText editText : fields) {
+			builder.append("[\"").append(editText.getTag()).append("\"] = ");
 			builder.append(createFieldValueLuaTable(editText)).append(", ");
 		}
 		builder.append(" } }");

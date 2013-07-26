@@ -6,3 +6,6 @@ gen
 libs
 obj
 bin
+
+# Mac system files:
+.DS_Store
