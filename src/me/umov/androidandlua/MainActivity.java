@@ -63,16 +63,15 @@ public class MainActivity extends Activity {
 	}
 	
 	/**
-	 * MANUAL creation of context table! Just made this way because JNI is complicated, but obviously it can't be done
-	 * this way.
+	 * MANUAL creation of context table! Just made this way because JNI is complicated, but obviously it can be done better than this.
 	 * 
 	 * It also allows INJECTION!!1!
 	 */
 	private String createContextTable(EditText currentEditText) {
 		StringBuilder builder = new StringBuilder();
 		builder.append("return { ");
-		builder.append("fieldvalue = ").append(createFieldValueLuaTable(currentEditText)).append(", ");
-		builder.append("fieldsvalues = { ");
+		builder.append("field = ").append(createFieldValueLuaTable(currentEditText)).append(", ");
+		builder.append("fields = { ");
 		for (EditText editText : fields) {
 			builder.append("[\"").append(editText.getTag()).append("\"] = ");
 			builder.append(createFieldValueLuaTable(editText)).append(", ");
@@ -83,9 +82,9 @@ public class MainActivity extends Activity {
 	
 	private String createFieldValueLuaTable(EditText field) {
 		if (field.getText().toString().trim().length() == 0) { // nil value
-			return "{ field = \"" + field.getTag() + "\" }";
+			return "{ name = \"" + field.getTag() + "\" }";
 		} else {
-			return "{ field = \"" + field.getTag() + "\", value = \"" + field.getText().toString() + "\" }";
+			return "{ name = \"" + field.getTag() + "\", value = \"" + field.getText().toString() + "\" }";
 		}
 	}
 	
